@@ -1,0 +1,37 @@
+Mon Apr 28 19:58:35 UTC 2025: Entrypoint script started
+Listing files in /app directory:
+total 28
+drwxrwxrwx 1 root root 4096 Apr 28 19:58 .
+drwxr-xr-x 1 root root 4096 Apr 28 19:58 ..
+-rwxrwxrwx 1 root root 1097 Apr 28 16:46 CAASS.Auth.Api.csproj
+-rwxrwxrwx 1 root root  141 Apr 27 00:46 CAASS.Auth.Api.http
+drwxrwxrwx 1 root root 4096 Apr 28 16:46 Controllers
+-rwxrwxrwx 1 root root  522 Apr 28 16:21 DbInitializerExtensions.cs
+-rwxrwxrwx 1 root root 1020 Apr 28 19:57 Dockerfile
+-rw-r--r-- 1 root root    0 Apr 28 19:58 ENTRYPOINT_WAS_EXECUTED
+drwxrwxrwx 1 root root 4096 Apr 28 17:37 Migrations
+drwxrwxrwx 1 root root 4096 Apr 28 15:49 Models
+-rwxrwxrwx 1 root root 1000 Apr 28 18:15 Program.cs
+drwxrwxrwx 1 root root 4096 Apr 27 00:46 Properties
+drwxrwxrwx 1 root root 4096 Apr 27 00:58 Services
+-rwxrwxrwx 1 root root 3164 Apr 28 16:47 Startup.cs
+-rwxrwxrwx 1 root root  257 Apr 28 17:44 appsettings.Development.Docker.json
+-rwxrwxrwx 1 root root  260 Apr 28 17:45 appsettings.Development.json
+-rwxrwxrwx 1 root root  284 Apr 28 19:03 appsettings.json
+drwxrwxrwx 1 root root 4096 Apr 28 19:02 bin
+-rw-r--r-- 1 app  app     0 Apr 28 19:11 db_check.log
+-rwxrwxrwx 1 root root 1261 Apr 28 19:53 entrypoint.sh
+-rw-r--r-- 1 root root   58 Apr 28 19:58 entrypoint_executed.log
+-rw-r--r-- 1 app  app    89 Apr 28 19:58 migration.log
+drwxrwxrwx 1 root root 4096 Apr 28 19:02 obj
+Waiting for database to be ready...
+Postgres is unavailable - sleeping
+./entrypoint.sh: line 15: psql: command not found
+Postgres is unavailable - sleeping
+./entrypoint.sh: line 15: psql: command not found
+Postgres is unavailable - sleeping
+./entrypoint.sh: line 15: psql: command not found
+Postgres is unavailable - sleeping
+./entrypoint.sh: line 15: psql: command not found
+Postgres is unavailable - sleeping
+./entrypoint.sh: line 15: psql: command not found

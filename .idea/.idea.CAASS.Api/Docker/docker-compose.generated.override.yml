@@ -1,0 +1,19 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  caass-auth-api:
+    build:
+      context: "C:\\Users\\wfahnestock\\Desktop\\LocalProjects\\CAASS.Api"
+      dockerfile: "CAASS.Auth.Api/Dockerfile"
+      target: "build"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Release/net9.0/CAASS.Auth.Api.dll"
+    environment: {}
+    image: "caass.auth.api:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\wfahnestock\\Desktop\\LocalProjects\\CAASS.Api\\CAASS.Auth.Api:/app:rw"
+    - "C:\\Users\\wfahnestock\\Desktop\\LocalProjects\\CAASS.Api:/src:rw"
+    - "C:\\Users\\wfahnestock\\.nuget\\packages:/root/.nuget/packages"
+    working_dir: "/app"
