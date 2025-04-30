@@ -1,8 +1,8 @@
 services:
-  caass-core:
+  caass-auth:
     build:
       context: .
-      dockerfile: CAASS.Core/Dockerfile
+      dockerfile: CAASS.Auth/Dockerfile
     depends_on:
       db:
         condition: service_healthy
@@ -10,16 +10,16 @@ services:
       # Use appsettings.Development.Docker.json instead of appsettings.Development.json
       # in the container
       - ASPNETCORE_ENVIRONMENT=Development.Docker
+      - ASPNETCORE_URLS=http://*:8080 # Set listen address
     ports:
       - "9090:8080"
-      - "8081:8081"
     networks:
       - caass-network
 
   db:
     image: postgres:16
     restart: unless-stopped
-    container_name: caass_db
+    container_name: caass_tenants
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: bluesky1!

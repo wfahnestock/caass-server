@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Auth", "Auth", "{76D4603C-BF7F-421F-B625-65DBB434A190}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CAASS.Core", "CAASS.Core\CAASS.Core.csproj", "{F58A1C2E-2227-448C-A256-F3AEEDC50077}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CAASS.Auth", "CAASS.Auth\CAASS.Auth.csproj", "{F58A1C2E-2227-448C-A256-F3AEEDC50077}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
