@@ -6,5 +6,5 @@ namespace CAASS.Auth.Models.Interfaces;
 /// </summary>
 public interface ITenantEntity
 {
-    public Guid? TenantId { get; set; }
+    public Guid TenantId { get; set; }
 }

@@ -17,10 +17,17 @@ public class Program
             {
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<TenantContext>();
-            
-                Console.WriteLine("Applying migrations...");
-                context.Database.Migrate();
-                Console.WriteLine("Migrations applied successfully");
+
+                if (context.Database.GetPendingMigrations().Any())
+                {
+                    Console.WriteLine("Applying migrations...");
+                    context.Database.Migrate();
+                    Console.WriteLine("Migrations applied successfully");
+                }
+                else
+                {
+                    Console.WriteLine("Database is already up to date, skipping migrations.");
+                }
             }
             return;
         }

@@ -1,8 +1,12 @@
 ﻿using System.Text;
+using AutoMapper;
+using CAASS.Auth.Messaging;
 using CAASS.Auth.Models.Context;
 using CAASS.Auth.Models.Entities;
+using CAASS.Auth.Models.Entities.Mappings;
 using CAASS.Auth.Services;
 using CAASS.Auth.Services.Implementations;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -28,9 +32,16 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         byte[] key = Encoding.ASCII.GetBytes(Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not found in configuration"));
+        
+        services.Configure<RabbitMqSettings>(Configuration.GetSection("RabbitMQ"));
 
         services.AddScoped<IAuthRequestService, AuthRequestService>();
+        services.AddScoped(typeof(IRabbitMqPublisher<>), typeof(RabbitMqPublisher<>));
+        
         services.AddSingleton<IPasswordHasher<Tenant>, PasswordHasher<Tenant>>();
+
+        // Add AutoMapper
+        services.AddAutoMapper(typeof(TenantContactMappingProfile));
         
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -84,6 +95,21 @@ public class Startup
         {
             options.UseNpgsql(Configuration.GetConnectionString("Postgres"));
         });
+
+        // Add MassTransit / RabbitMQ 
+        // services.AddMassTransit(options =>
+        // {
+        //     options.UsingRabbitMq((ctx, cfg) =>
+        //     {
+        //         cfg.Host(Configuration["RabbitMQ:Host"], "/", h =>
+        //         {
+        //             h.Username(Configuration["RabbitMQ:Username"] ?? "guest");
+        //             h.Password(Configuration["RabbitMQ:Password"] ?? "guest");
+        //         });
+        //     });
+        // });
+
+        services.AddHealthChecks();
         
         services.AddControllers();
     }

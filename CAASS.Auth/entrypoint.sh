@@ -1,14 +1,7 @@
 #!/bin/bash
 set -e
 
-# Debug marker to confirm script execution
-touch /app/ENTRYPOINT_WAS_EXECUTED
 echo "Entrypoint script started at $(date)" > /app/entrypoint_executed.log
-
-# Debug information
-echo "$(date): Entrypoint script started" > /app/migration.log
-echo "Listing files in /app directory:" | tee -a /app/migration.log
-ls -la /app | tee -a /app/migration.log
 
 # Wait for the database
 echo "Waiting for database to be ready..." | tee -a /app/migration.log
@@ -22,7 +15,7 @@ echo "Database is up" | tee -a /app/migration.log
 # Check if the DLL exists before trying to run it
 if [ ! -f /app/CAASS.Auth.dll ]; then
   echo "ERROR: CAASS.Auth.dll not found in /app directory" | tee -a /app/migration.log
-  #exit 1
+  exit 1
 fi
 
 # Run migrations

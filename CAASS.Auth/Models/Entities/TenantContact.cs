@@ -1,3 +1,5 @@
+using CAASS.Auth.Models.Interfaces;
+
 namespace CAASS.Auth.Models.Entities;
 
 /// <summary>
@@ -24,7 +26,7 @@ namespace CAASS.Auth.Models.Entities;
 /// <param name="ZipCode">The zip code for this TenantContact.</param>
 /// <param name="Country">The ISO-3166 country code for this TenantContact</param>
 /// </summary>
-public record TenantContact
+public record TenantContact : ITenantEntity
 {
     public required Guid TenantContactId { get; set; }
     public required Guid TenantId { get; set; }
@@ -39,7 +41,7 @@ public record TenantContact
     public required bool IsTechnicalContact { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    public required string Address { get; set; }
+    public required string StreetAddress { get; set; }
     public required string City { get; set; }
     public required string State { get; set; }
     public required string ZipCode { get; set; }

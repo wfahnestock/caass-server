@@ -1,0 +1,63 @@
+{
+  "permissions": [
+    {
+      "configure": ".*",
+      "read": ".*",
+      "user": "guest",
+      "vhost": "/",
+      "write": ".*"
+    },
+    {
+      "configure": ".*",
+      "read": ".*",
+      "user": "caass",
+      "vhost": "/",
+      "write": ".*"
+    }
+  ],
+  "bindings": [],
+  "queues": [],
+  "policies": [],
+  "parameters": [],
+  "rabbitmq_version": "4.1.0",
+  "rabbit_version": "4.1.0",
+  "exchanges": [
+    {
+      "arguments": {},
+      "auto_delete": false,
+      "durable": true,
+      "name": "CAASS.Auth.Models.Events:TenantCreatedEvent",
+      "type": "fanout",
+      "vhost": "/"
+    }
+  ],
+  "vhosts": [
+    {
+      "default_queue_type": "classic",
+      "limits": [],
+      "metadata": {
+        "description": "Default virtual host",
+        "tags": []
+      },
+      "name": "/"
+    }
+  ],
+  "users": [
+    {
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "limits": {},
+      "name": "caass",
+      "password_hash": "1gBHYuiBQ3Awi4wF+vglayBHDdvCezcBRm7x1LD5jC6RtKCo",
+      "tags": [
+        "administrator"
+      ]
+    }
+  ],
+  "global_parameters": [
+    {
+      "name": "cluster_tags",
+      "value": []
+    }
+  ],
+  "topic_permissions": []
+}

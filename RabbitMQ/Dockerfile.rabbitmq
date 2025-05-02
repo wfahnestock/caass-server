@@ -1,0 +1,47 @@
+﻿# Use the official RabbitMQ image with management plugin
+FROM rabbitmq:4-management
+
+# Create directory for custom scripts
+RUN mkdir -p /usr/local/bin/custom
+
+# Copy the definitions file to the container
+COPY ./rabbitmq_definitions.json /etc/rabbitmq/rabbitmq_definitions.json
+
+# Create an entrypoint script to import definitions after RabbitMQ starts
+RUN echo '#!/bin/bash \n\
+\n\
+# Start RabbitMQ in the background \n\
+rabbitmq-server & \n\
+\n\
+# Wait for RabbitMQ to be ready using rabbitmq-diagnostics \n\
+echo "Waiting for RabbitMQ to start..." \n\
+max_retries=30 \n\
+retry_interval=1 \n\
+retries=0 \n\
+until rabbitmq-diagnostics check_port_connectivity || [ $retries -eq $max_retries ]; do \n\
+    sleep $retry_interval \n\
+    retries=$((retries+1)) \n\
+    echo "Waiting for RabbitMQ to be ready... ($retries/$max_retries)" \n\
+done \n\
+\n\
+if [ $retries -eq $max_retries ]; then \n\
+    echo "RabbitMQ failed to start within the timeout period" \n\
+    exit 1 \n\
+fi \n\
+\n\
+echo "RabbitMQ is ready. Importing definitions..." \n\
+# Import the definitions file \n\
+rabbitmqctl import_definitions /etc/rabbitmq/rabbitmq_definitions.json \n\
+echo "Definitions imported successfully" \n\
+\n\
+# Keep the container running by waiting for the RabbitMQ process \n\
+wait $!' > /usr/local/bin/custom/docker-entrypoint.sh
+
+# Make the script executable
+RUN chmod +x /usr/local/bin/custom/docker-entrypoint.sh
+
+# Set the custom entrypoint
+ENTRYPOINT ["/usr/local/bin/custom/docker-entrypoint.sh"]
+
+# Expose standard ports
+EXPOSE 5672 15672

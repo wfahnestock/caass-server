@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CAASS.Auth.Migrations
 {
     [DbContext(typeof(TenantContext))]
-    [Migration("20250430201018_InitialCreate")]
+    [Migration("20250502142404_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -47,6 +47,17 @@ namespace CAASS.Auth.Migrations
                     b.Property<DateTime?>("LastLogin")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("LockedReason")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OrganizationEmailDomain")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("OrganizationName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text");
@@ -60,6 +71,10 @@ namespace CAASS.Auth.Migrations
                     b.Property<int>("RetryCount")
                         .HasColumnType("integer");
 
+                    b.Property<string>("TenantSlug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("TenantId");
 
                     b.ToTable("Tenants");
@@ -70,10 +85,6 @@ namespace CAASS.Auth.Migrations
                     b.Property<Guid>("TenantContactId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -111,6 +122,10 @@ namespace CAASS.Auth.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("StreetAddress")
                         .IsRequired()
                         .HasColumnType("text");
 

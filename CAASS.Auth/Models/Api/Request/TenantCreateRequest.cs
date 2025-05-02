@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using CAASS.Auth.Models.Api.Dto;
 
 namespace CAASS.Auth.Models.Api.Request;
 
-public class TenantCreateRequest
+public record TenantCreateRequest
 {
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Invalid email format")]
@@ -19,8 +20,11 @@ public class TenantCreateRequest
     [Required(ErrorMessage = "Organization name is required")]
     public string OrganizationName { get; set; } = string.Empty;
     
-    [Phone(ErrorMessage = "Invalid phone number format")]
-    public string? PhoneNumber { get; set; }
+    public required string StreetAddress { get; set; } = string.Empty;
+    public required string City { get; set; } = string.Empty;
+    public required string State { get; set; } = string.Empty;
+    public required string ZipCode { get; set; } = string.Empty;
+    public string? CountryCode { get; set; } = "US";
     
-    
+    public IEnumerable<TenantContactDto> Contacts { get; set; } = new List<TenantContactDto>();
 }
