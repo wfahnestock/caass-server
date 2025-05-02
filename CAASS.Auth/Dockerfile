@@ -27,7 +27,7 @@ COPY CAASS.Auth/entrypoint.sh .
 RUN chmod 755 /app/entrypoint.sh
 RUN ls -la
 
-ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_ENVIRONMENT=Development.Docker
 ENV DB_HOST=caass_tenants
 ENV DB_USER=postgres
 ENV DB_PASSWORD=bluesky1!

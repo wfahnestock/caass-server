@@ -52,8 +52,8 @@ public class TenantCreatedConsumerService : BackgroundService
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             _logger.LogInformation($"Received message: {message}");
-            
-            bool isProcessed = await ProcessMessage(message);
+
+            bool isProcessed = false;
 
             try
             {
@@ -82,45 +82,110 @@ public class TenantCreatedConsumerService : BackgroundService
     private async Task<bool> ProcessMessage(string message)
     {
         _logger.LogInformation($"Processing message: {message}");
-        
+    
         var context = JsonConvert.DeserializeObject<TenantCreatedEvent>(message);
-        
-        DockerClient client = new DockerClientConfiguration()
-            .CreateClient();
-
-        string containerName = $"{context.TenantSlug}-db";
-        string dbPassword = CryptoDeterministicStringGenerator.Generate(context.TenantSlug, 24);
-        var response = await client.Containers.CreateContainerAsync(new CreateContainerParameters
+        if (context == null)
         {
-            Image = "postgres:latest",
-            Name = containerName,
-            Env = new List<string>
+            _logger.LogError("Failed to deserialize message to TenantCreatedEvent");
+            return false;
+        }
+    
+        try
+        {
+            // Configure Docker client
+            DockerClient client;
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
             {
-                $"POSTGRES_USER=caass",
-                $"POSTGRES_PASSWORD={dbPassword}",
-                $"POSTGRES_DB={context.TenantSlug}-db"
-            },
-            HostConfig = new HostConfig
+                client = new DockerClientConfiguration(new Uri("npipe://./pipe/docker_engine")).CreateClient();
+                _logger.LogInformation("Using Windows Docker named pipe");
+            }
+            else
             {
-                PortBindings = new Dictionary<string, IList<PortBinding>>
+                client = new DockerClientConfiguration(new Uri("unix:///var/run/docker.sock")).CreateClient();
+                _logger.LogInformation("Using Unix Docker socket");
+            }
+    
+            string containerName = $"{context.TenantSlug}-db";
+            string volumeName = $"{context.TenantSlug}-data";
+            string dbPassword = CryptoDeterministicStringGenerator.Generate(context.TenantSlug, 24);
+    
+            // Check if container already exists
+            var containers = await client.Containers.ListContainersAsync(
+                new ContainersListParameters { All = true });
+            
+            var existingContainer = containers.FirstOrDefault(c => 
+                c.Names.Contains($"/{containerName}"));
+                
+            if (existingContainer != null)
+            {
+                // Container exists
+                _logger.LogInformation($"Container {containerName} already exists with ID {existingContainer.ID}");
+                
+                // Check if it's running
+                if (existingContainer.State == "running")
                 {
-                    { "5432/tcp", new List<PortBinding>
-                        {
-                            new PortBinding { HostPort = ""  } // dynamic port
-                        } 
-                    }
+                    _logger.LogInformation($"Container {containerName} is already running, skipping creation");
+                    return true;
+                }
+                else
+                {
+                    // Container exists but not running, remove it
+                    _logger.LogInformation($"Container {containerName} exists but not running, removing it");
+                    await client.Containers.RemoveContainerAsync(existingContainer.ID, new ContainerRemoveParameters { Force = true });
+                    _logger.LogInformation($"Removed container {containerName}");
                 }
             }
-        });
-        
-        if (response.Warnings != null)
-        {
-            foreach (var warning in response.Warnings)
+    
+            // Create volume if it doesn't exist
+            try
             {
-                _logger.LogWarning($"Warning when creating container: {warning}");
+                await client.Volumes.CreateAsync(new VolumesCreateParameters { Name = volumeName });
             }
+            catch (DockerApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                _logger.LogInformation($"Volume {volumeName} already exists");
+            }
+            
+            _logger.LogInformation($"Password: {dbPassword}");
+    
+            var response = await client.Containers.CreateContainerAsync(new CreateContainerParameters
+            {
+                Image = "postgres:16",
+                Name = containerName,
+                Env = new List<string>
+                {
+                    $"POSTGRES_USER=caass",
+                    $"POSTGRES_PASSWORD={dbPassword}",
+                    $"POSTGRES_DB={context.TenantSlug}-db"
+                },
+                HostConfig = new HostConfig
+                {
+                    PortBindings = new Dictionary<string, IList<PortBinding>>
+                    {
+                        { "5432/tcp", new List<PortBinding>
+                            {
+                                new PortBinding { HostPort = ""  }
+                            }
+                        }
+                    },
+                    PublishAllPorts = true,
+                    Binds = new List<string> { $"{volumeName}:/var/lib/postgresql/data" }
+                },
+                ExposedPorts = new Dictionary<string, EmptyStruct>
+                {
+                    { "5432/tcp", new EmptyStruct() }
+                },
+            });
+    
+            bool started = await client.Containers.StartContainerAsync(response.ID, new ContainerStartParameters());
+            _logger.LogInformation($"Container {containerName} started: {started}");
+    
+            return started;
         }
-
-        return await client.Containers.StartContainerAsync(containerName, new ContainerStartParameters());
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error creating container for tenant {context.TenantSlug}");
+            return false;
+        }
     }
 }
