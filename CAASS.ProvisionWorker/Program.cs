@@ -1,4 +1,5 @@
 using CAASS.ProvisionWorker.Messaging;
+using CAASS.ProvisionWorker.Models.Context;
 
 namespace CAASS.ProvisionWorker;
 
@@ -23,6 +24,7 @@ public class Program
         {
             services.AddHostedService<TenantCreatedConsumerService>();
             services.Configure<RabbitMqSettings>(Configuration.GetSection("RabbitMQ"));
+            services.AddDbContext<TenantDbContext>();
         });
         
 

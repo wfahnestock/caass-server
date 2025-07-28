@@ -13,6 +13,10 @@
         <PackageReference Include="MassTransit" Version="8.4.1-develop.2269" />
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.4.1-develop.2269" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.3"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     </ItemGroup>
@@ -25,7 +29,5 @@
 
     <ItemGroup>
       <Folder Include="Consumers\" />
-      <Folder Include="Models\Context\" />
-      <Folder Include="Models\Entities\" />
     </ItemGroup>
 </Project>

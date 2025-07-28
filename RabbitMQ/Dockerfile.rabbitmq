@@ -7,6 +7,9 @@ RUN mkdir -p /usr/local/bin/custom
 # Copy the definitions file to the container
 COPY ./rabbitmq_definitions.json /etc/rabbitmq/rabbitmq_definitions.json
 
+# copy the RabbitMQ configuration file
+# COPY ./rabbitmq.conf /etc/rabbitmq/
+
 # Create an entrypoint script to import definitions after RabbitMQ starts
 RUN echo '#!/bin/bash \n\
 \n\

@@ -127,6 +127,7 @@ public class AuthRequestService(
         {
             TenantId = tenant.TenantId,
             TenantSlug = tenant.TenantSlug,
+            Contacts = req.Contacts,
         };
         
         await tenantCreatedEventPublisher.PublishAsync(tenantCreatedEvent, RabbitMqSettings.RabbitMqQueues.TenantCreatedQueue);

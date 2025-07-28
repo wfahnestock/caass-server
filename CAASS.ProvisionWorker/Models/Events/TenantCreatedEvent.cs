@@ -4,4 +4,5 @@ public class TenantCreatedEvent
 {
     public Guid TenantId { get; set; }
     public string TenantSlug { get; set; } = string.Empty;
+    public List<TenantContact> Contacts { get; set; } = new List<TenantContact>();
 }
